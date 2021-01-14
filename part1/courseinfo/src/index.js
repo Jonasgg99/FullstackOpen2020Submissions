@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const App = () => {
+const App = (props) => {
+  const {counter} = props
   const course = {
     name: 'Half Stack application development',
   
@@ -28,9 +29,12 @@ const App = () => {
       <Header course={course.name} />
       <Content parts={course.parts} />
       <Total parts={course.parts} />
+      {counter}
     </div>
   )
 }
+
+let counter = 1
 
 const Total = (props) => {
   let total = 0
@@ -68,8 +72,17 @@ const Header = (props) => {
   return <h1>{props.course}</h1>
 }
 
+const refresh = () => {
+  ReactDOM.render(<App counter={counter} />, 
+  document.getElementById('root'))
+}
 
-ReactDOM.render(<App />, document.getElementById('root'))
+setInterval(() => {
+  refresh()
+  counter += 1
+}, 1000)
+
+//ReactDOM.render(<App counter={counter} />, document.getElementById('root'))
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
