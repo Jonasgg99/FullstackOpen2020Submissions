@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const Course = ({ course }) => {
+  return  (
+    <div>
+  <Header title={course.name} />
+  <Content parts={course.parts} />
+  <Total parts={course.parts} />
+  </div>
+  )}
+
+const Total = ({ parts }) => {
+const add = (a, b) => a + b
+const number = parts.map((part) => part.exercises)
+return (
+  <p><b>Total exercises {number.reduce(add)}</b></p>
+)}
+
+const Header = ({ title }) => <h2>{title}</h2>
+
+const Content = ({ parts }) => {
+return (
+  <ul>
+    {parts.map((part) => 
+      <Part key={part.id} part={part} /> 
+      )}
+  </ul>
+)
 }
+
+const Part = ({ part }) => {
+return (
+  <li>{part.name} {part.exercises}</li>
+)
+}
+
+const App = ({ courses }) => {
+  
+
+  return (
+  <div>
+    <h1>Web development curriculum</h1>
+    {courses.map((course => 
+    <Course key={course.id} course={course} />
+    ))}
+  </div>
+  )}
 
 export default App;
