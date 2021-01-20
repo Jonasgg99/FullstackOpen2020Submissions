@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Persons = ({ persons }) => 
     <ul>
@@ -27,12 +28,22 @@ const PersonForm = ({ addNew, newName, newNumber, handleChange, handleNumberChan
 }
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-1234567'}
-  ]) 
+  const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+
+  console.log('before useEffect')
+  useEffect(() => {
+    console.log('effect start')
+    axios
+    .get('http://localhost:3001/persons')
+    .then(response => {
+      console.log('promise fulfilled')
+      setPersons(response.data)
+    })
+  }, [])
+  console.log('after useEffect')
 
   const includesName = name => {
     if (persons.map(person => person.name).includes(name)) {
