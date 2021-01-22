@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import service from './services/phonebook'
 
-const Persons = ({ persons }) => 
+const Persons = ({ persons, deleter, filteredList }) => {
+
+    return (
     <ul>
-    {persons.map((person => <li key={person.name} >{person.name} {person.number}</li>))}
+    {filteredList.map((person => <li key={person.name} >{person.name} {person.number}
+    <button onClick={() => deleter(person)}>delete</button></li>))}
     </ul>
+    )}
 
 const PersonFilter = ({ filter, handling }) => 
   <div>
@@ -33,37 +37,57 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
 
-  console.log('before useEffect')
-  useEffect(() => {
-    console.log('effect start')
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      console.log('promise fulfilled')
-      setPersons(response.data)
+
+  const hook = () => {
+    service.getAll().then(data => {
+      setPersons(data)
     })
-  }, [])
-  console.log('after useEffect')
+  }
+  useEffect(hook, [])
 
   const includesName = name => {
-    if (persons.map(person => person.name).includes(name)) {
+    if (persons.find(person => person.name.toLowerCase() === name.toLowerCase())) {
       return true
     }
     return false
   }
 
-  const addNew = (event) => {
-    event.preventDefault()
-    includesName(newName) ?
-    window.alert(`${newName} is already added to phonebook
-    :)`)
-    : setPersons(persons.concat({ name: newName, number: newNumber }))
-    setNewName('')
-    setNewNumber('')
+  const deleter = (person) => {
+    console.log(person.id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      console.log('deleting ' + person.name)
+      service.deleter(person.id).then(() => {
+        setPersons(persons.filter(p => p.id !== person.id))
+      })
+    }
   }
 
-  const filtered = persons.filter(person => 
-    person.name.toLowerCase().includes(filter.toLowerCase())) 
+  const addNew = (event) => {
+    event.preventDefault()
+    const newPerson = {name:newName, number:newNumber}
+    if (includesName(newName)) {
+    if (window.confirm(`${newName} is already added to phonebook
+    :). Replace number?`)) {
+      service.updateNumber(newPerson,persons).then(returnedPerson =>
+        setPersons(persons.map(person => person.id !== returnedPerson.id?
+          person
+          :returnedPerson )))
+          .then(setNewName(''))
+          .then(setNewNumber(''))
+    } else {
+      window.alert('person not replaced')
+    }
+    } else {
+      service.uploadNew(newPerson).then(data => {
+      setPersons(persons.concat(data))
+      setNewName('')
+      setNewNumber('')
+      })
+    }
+  }
+
+  //const filtered = persons.filter(person => 
+   // person.name.toLowerCase().includes(filter.toLowerCase())) 
 
   const handleChange = (event) => setNewName(event.target.value)
   const handleNumberChange = (event) => setNewNumber(event.target.value)
@@ -71,7 +95,11 @@ const App = () => {
   const filterChange = (event) => {
     setFilter(event.target.value)
   }
-  console.log('filtered',filtered);
+  console.log('filteredlist'+persons)
+
+  const filteredList = persons.filter(person => 
+    person.name.toLowerCase().includes(filter.toLowerCase()))
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -84,9 +112,10 @@ const App = () => {
       handleChange={handleChange} handleNumberChange={handleNumberChange} /> 
       
       <h2>Numbers</h2>
-      <Persons persons={filtered} />
+      <Persons persons={persons} deleter={deleter} filteredList={filteredList}/>
     </div>
   )
 }
+
 
 export default App
