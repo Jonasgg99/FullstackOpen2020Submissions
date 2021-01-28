@@ -1,0 +1,9 @@
+postman
+node
+express
+nodemon
+VS REST client
+safe
+idempotent
+app.use(json)
+Morgan
