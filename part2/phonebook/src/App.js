@@ -93,12 +93,18 @@ const App = () => {
           :returnedPerson )))
           .then(setNewName(''))
           .then(setNewNumber(''))
-          .catch(error => {
-            setErrorMessage({text:`${newName} is already removed from server`, error:true})
-            const personToRemove = persons.find(n=>n.name.toLowerCase() === newPerson.name.toLowerCase())
-            setPersons(persons.filter(person => person.id !== personToRemove.id))
-          })
           .then(setErrorMessage({text:`Updated ${newPerson.name}`, error:false}))
+          .catch(error => {
+            if (error.response.data.error === "Validation failed: name: Cannot read property 'ownerDocument' of null") {
+              setErrorMessage({text:`${newPerson.name} already deleted from server. Updating list...`, error:true})
+              const personToRemove = persons.find(n=>n.name.toLowerCase() === newPerson.name.toLowerCase())
+              setPersons(persons.filter(person => person.id !== personToRemove.id))
+              return
+            }
+            setErrorMessage({text:`${error.response.data.error}`, error:true})
+            
+            
+          })
       .then(setTimeout(() => {
         setErrorMessage(null)
       },5000))
@@ -117,6 +123,10 @@ const App = () => {
       .then(setTimeout(() => {
         setErrorMessage(null)
       },5000))
+      .catch(error => {
+        setErrorMessage({text:`Error: ${error.response.data.error}`, error:true})
+      })
+      
     }
   }
 
