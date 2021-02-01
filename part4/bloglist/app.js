@@ -4,18 +4,10 @@ const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
-
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
-});
+const Blog = require("./models/blog")
 
 morgan.token("text", function (req, res) { return JSON.stringify(req.body) });
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :text :date[web]"));
-
-const Blog = mongoose.model("Blog", blogSchema);
 
 const mongoUrl = config.MONGODB_URI;
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
