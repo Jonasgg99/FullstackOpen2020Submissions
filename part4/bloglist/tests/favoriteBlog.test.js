@@ -12,13 +12,11 @@ describe("favorite blog", () => {
 
   test("when list has multiple items, return item with highest likes", () => {
     const result = listHelper.favoriteBlog(listWithFiveBlogs);
-    console.log(result);
     expect(result).toEqual({title:"one",likes:9});
   });
 
   test("when list has one item, return that item", () => {
     const result = listHelper.favoriteBlog([{title:"test",likes:4}]);
-    console.log(result);
     expect(result).toEqual({title:"test",likes:4});
   });
 });
