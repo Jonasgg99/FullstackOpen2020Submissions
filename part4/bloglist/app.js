@@ -1,42 +1,20 @@
-const config = require("./utils/config")
+const config = require("./utils/config");
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
-const Blog = require("./models/blog")
+const blogsRouter = require("./controllers/blogs")
 
 morgan.token("text", function (req, res) { return JSON.stringify(req.body) });
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :text :date[web]"));
-
-const mongoUrl = config.MONGODB_URI;
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
+console.log("Connecting to MongoDB...");
+//Connecting to server
+mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/blogs", (request, response) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs);
-    })
-    .catch(error => {
-      return response.status(404).send({error: "not found"});
-    });
-});
-
-app.post("/api/blogs", (request, response) => {
-  const blog = new Blog(request.body);
-
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result);
-    })
-    .catch(error => {
-      return response.status(400).send({error});
-    });
-});
+app.use("/api/blogs", blogsRouter);
 
 module.exports = app;
