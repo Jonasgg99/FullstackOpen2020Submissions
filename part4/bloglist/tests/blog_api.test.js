@@ -41,9 +41,34 @@ test('there are two blogs', async () => {
   expect(response.body).toHaveLength(initialBlogs.length);
 });
 
+test('id is defined', async () => {
+  const response = await api.get('/api/blogs');
+
+  expect(response.body[0].id).toBeDefined();
+});
+
+test('added blogs without likes default to 0', async () => {
+  const newBlog = {
+    title: 'blog without likes',
+    url: 'testurl',
+    author: "testMan",
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(200)
+    .expect((response) => {
+      console.log(response.body);
+      response.body.likes === 0;
+    });
+    
+});
+
 test('a blog can be added', async () => {
   const newBlog = {
     title: 'async/await simplifies making async calls',
+    url: 'testurl',
     author: "testMan",
   };
 
@@ -61,6 +86,18 @@ test('a blog can be added', async () => {
   expect(titles).toContain(
     'async/await simplifies making async calls'
   );
+});
+
+test('missing title and url', async () => {
+  const newBlog = new Blog({
+    author: "testauthor",
+    likes: 5
+  });
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400);
 });
 
 afterAll(() => {
