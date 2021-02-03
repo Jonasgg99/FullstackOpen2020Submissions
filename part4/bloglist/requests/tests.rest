@@ -1,7 +1,15 @@
 GET http://localhost:3003/api/blogs
 
 ###
-DELETE http://localhost:3001/api/persons/6014625a7a6fd1035c850840
+DELETE http://localhost:3003/api/blogs/6019809ac484d057d891b165
+
+###
+PUT http://localhost:3003/api/blogs/6019809ac484d057d891b164
+Content-Type: application/json
+
+{
+    "likes": 7
+}
 
 ###
 POST http://localhost:3003/api/blogs
