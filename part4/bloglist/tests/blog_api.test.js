@@ -59,7 +59,6 @@ test('added blogs without likes default to 0', async () => {
     .send(newBlog)
     .expect(200)
     .expect((response) => {
-      console.log(response.body);
       response.body.likes === 0;
     });
     
