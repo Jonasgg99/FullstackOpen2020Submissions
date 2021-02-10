@@ -29,15 +29,15 @@ const Blog = ({ blog, update, removeBlog }) => {
     setVisibility(!visible);
   };
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} {blog.author}
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>show</button>
+        <button onClick={toggleVisibility} class='showDetailsButton'>show</button>
       </div>
-      <div style={showWhenVisible}>
+      <div className='togglableBloginfo' style={showWhenVisible} >
         {blog.url}
         <br/>{blog.likes}
-        <button onClick={addLike}>like</button>
+        <button onClick={addLike} className='likeButton'>like</button>
         <br/>{blog.user.name}
         <button onClick={toggleVisibility}>hide</button>
         <br/>
