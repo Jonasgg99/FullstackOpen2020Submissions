@@ -18,17 +18,17 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
-  }, [])
+    );
+  }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser');
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
       blogService.setToken(user.token);
     }
-  }, [])
+  }, []);
 
   const handleLogin =  async(event) => {
     event.preventDefault();
@@ -36,7 +36,7 @@ const App = () => {
     try {
       const user = await loginService.login({
         username, password,
-      })
+      });
       console.log('success, ', user.username, 'authorized');
       window.localStorage.setItem(
         'loggedBloglistUser', JSON.stringify(user)
@@ -44,13 +44,13 @@ const App = () => {
       blogService.setToken(user.token);
       setUser(user);
     } catch (exception) {
-      setNotification({text:`Wrong username or password`, error:true})
-      console.log('wrong credentials')
+      setNotification({ text:'Wrong username or password', error:true });
+      console.log('wrong credentials');
       setTimeout(() => {
-        setNotification(null)
-      },5000)
+        setNotification(null);
+      },5000);
     }
-  }
+  };
 
   /*const creationForm = () => (
     <form onSubmit={addBlog}>
@@ -63,33 +63,33 @@ const App = () => {
   )*/
 
   const updateBlog = (id, blogValues) => {
-    
+
     blogService.update(id, blogValues)
       .then(response => {
         const updatedBlogs = blogs.map(entry => {
           return (
-          entry.id === id
-            ? response
-            : entry
-          )
-        })
+            entry.id === id
+              ? response
+              : entry
+          );
+        });
         setBlogs(updatedBlogs);
       })
       .catch(error => {
         console.log(error);
-      })
-  }
+      });
+  };
 
   const removeBlog = (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       blogService.remove(blog).then(() => {
-        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setBlogs(blogs.filter(b => b.id !== blog.id));
       })
-      .catch(error => {
-        console.log(error)
-      })
+        .catch(error => {
+          console.log(error);
+        });
     }
-  }
+  };
   const addBlog = (blogObject) => {
     /*event.preventDefault();
     console.log('adding blog');
@@ -100,16 +100,16 @@ const App = () => {
     blogService.create(blogObject)
       .then(response => {
         setBlogs(blogs.concat(response));
-        setNotification({text:`a new blog "${response.title}" has been added.`, error:false})
+        setNotification({ text:`a new blog "${response.title}" has been added.`, error:false });
       })
       /*.then(setTitle(''), setAuthor(''), setUrl(''))*/
       .then(setTimeout(() => {
-        setNotification(null)
+        setNotification(null);
       },5000))
       .catch(error => {
         console.log(error);
-      })
-  }
+      });
+  };
 
   const Notification = ({ message }) => {
     const notificationStyle = {
@@ -120,15 +120,15 @@ const App = () => {
       border: message.error? '3px solid red' : '3px solid green',
       borderRadius: '5px',
       padding: '15px'
-    }
+    };
     return (
       <div style={notificationStyle}>
         { message.text }
       </div>
-    )
-  }
-  
- /* blogs.sort((a,b) => a.likes - b.likes)*/
+    );
+  };
+
+  /* blogs.sort((a,b) => a.likes - b.likes)*/
 
   if (user === null) {
     return (
@@ -140,17 +140,17 @@ const App = () => {
           <div>
             username
             <input type="text" value={username} name="Username"
-            onChange={({target}) => setUsername(target.value)}/>
+              onChange={({ target }) => setUsername(target.value)}/>
           </div>
           <div>
             password
             <input type="text" value={password} name="Password"
-            onChange={({target}) => setPassword(target.value)}/>
+              onChange={({ target }) => setPassword(target.value)}/>
           </div>
           <button type="submit">Log in</button>
         </form>
       </div>
-    )
+    );
   }
 
   return (
@@ -159,11 +159,11 @@ const App = () => {
       <div>{user.username} is logged in<button onClick={() => {
         setUser(null);
         window.localStorage.clear();
-        }
+      }
       }>log out</button></div>
       <br/>
       {notification === null?
-      <br/> : <Notification message = {notification} />}
+        <br/> : <Notification message = {notification} />}
       <Togglable buttonLabel='New blog' >
         <BlogForm createBlog={addBlog} />
       </Togglable>
@@ -171,7 +171,7 @@ const App = () => {
         <Blog key={blog.id} blog={blog} update={updateBlog} removeBlog={removeBlog} />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
