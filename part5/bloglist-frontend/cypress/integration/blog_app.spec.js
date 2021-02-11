@@ -95,7 +95,7 @@ describe('Blog app', function() {
 
     describe('when three blogs exist', function() {
 
-      it('blogs are sorted by highest likes first', function() {
+      it.only('blogs are sorted by highest likes first', function() {
         cy.createBlog({
           title:'twolikes',
           author:'new blog author',
@@ -114,12 +114,14 @@ describe('Blog app', function() {
           url:'new blog url',
           likes: 1
         })
-        cy.get('.showDetailsButton').click({ multiple: true })
-        cy.get('.blog').get('#likes').should('contain', '3')
-        cy.contains('remove').click()
-        cy.get('.blog').get('#likes').should('contain', '2')
-        cy.contains('remove').click()
-        cy.get('.blog').get('#likes').should('contain', '1')
+        
+        /*cy.get('.showDetailsButton').click({ multiple: true })*/
+        
+        cy.get('#likes').then(likes => {
+          cy.wrap(likes[0]).contains('3')
+          cy.wrap(likes[1]).contains('2')
+          cy.wrap(likes[2]).contains('1')
+        })
       })
     })
   })
