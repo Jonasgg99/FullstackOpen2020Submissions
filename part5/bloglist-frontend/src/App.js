@@ -122,13 +122,13 @@ const App = () => {
       padding: '15px'
     };
     return (
-      <div style={notificationStyle}>
+      <div className="error" style={notificationStyle}>
         { message.text }
       </div>
     );
   };
 
-  /* blogs.sort((a,b) => a.likes - b.likes)*/
+  blogs.sort((a,b) => b.likes - a.likes)
 
   if (user === null) {
     return (
@@ -139,15 +139,15 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-            <input type="text" value={username} name="Username"
+            <input id="username" type="text" value={username} name="Username"
               onChange={({ target }) => setUsername(target.value)}/>
           </div>
           <div>
             password
-            <input type="text" value={password} name="Password"
+            <input id="password" type="text" value={password} name="Password"
               onChange={({ target }) => setPassword(target.value)}/>
           </div>
-          <button type="submit">Log in</button>
+          <button id="loginButton" type="submit">Log in</button>
         </form>
       </div>
     );
@@ -158,6 +158,8 @@ const App = () => {
       <h2>blogs</h2>
       <div>{user.username} is logged in<button onClick={() => {
         setUser(null);
+        setUsername('')
+        setPassword('')
         window.localStorage.clear();
       }
       }>log out</button></div>
@@ -167,9 +169,9 @@ const App = () => {
       <Togglable buttonLabel='New blog' >
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      {blogs.map(blog =>
+      <div id='bloglist'>{blogs.map(blog =>
         <Blog key={blog.id} blog={blog} update={updateBlog} removeBlog={removeBlog} />
-      )}
+      )}</div>
     </div>
   );
 };
