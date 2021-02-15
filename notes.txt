@@ -7,3 +7,6 @@ safe
 idempotent
 app.use(json)
 Morgan
+
+Cypress
+npm install eslint-plugin-cypress --save-dev
