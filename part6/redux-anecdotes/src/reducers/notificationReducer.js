@@ -1,5 +1,3 @@
-const notificationAtStart = null
-
 export const notificationChange = (message) => {
   return {
     type: 'SET_NOTIFICATION',
@@ -13,7 +11,7 @@ export const removeNotification = () => {
   }
 }
 
-const notificationReducer = (state = notificationAtStart, action) => {
+const notificationReducer = (state = null, action) => {
   switch(action.type) {
     case 'SET_NOTIFICATION':
       return action.message
