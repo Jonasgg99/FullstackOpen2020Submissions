@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 const AnecdoteList = (props) => {
   const anecdotes = useSelector(state => {
     if (state.filter === '') {
-      console.log(typeof state.anecdotes[0].content);
       return state.anecdotes
     }
     return state.anecdotes.filter(note => 
