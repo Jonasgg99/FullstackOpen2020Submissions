@@ -13,9 +13,9 @@ const createNew = async (content) => {
   return response.data
 }
 
-const addVote = async (anecdote) => {
-  const changedAnecdote = { ...anecdote, votes: anecdote.votes +1 }
-  const response = await axios.put(`${baseUrl}/${anecdote.id}`, changedAnecdote)
+const addVote = async ({ votes, id }) => {
+  const newVotes = { votes: votes +1 }
+  const response = await axios.patch(`${baseUrl}/${id}`, newVotes)
   return response.data
 }
 
