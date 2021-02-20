@@ -10,3 +10,6 @@ Morgan
 
 Cypress
 npm install eslint-plugin-cypress --save-dev
+
+part6
+spread syntax: [...numbers, 4, 5, 6] instead of concat
