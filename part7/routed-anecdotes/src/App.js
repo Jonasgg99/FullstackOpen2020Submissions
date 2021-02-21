@@ -68,14 +68,11 @@ const CreateNew = ({ addNew }) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')*/
 
-  const contentField = useField('content')
-  const authorField = useField('author')
-  const infoField = useField('info')
+  const { reset:contentReset, ...content } = useField('content')
+  const { reset:authorReset, ...author } = useField('author')
+  const { reset:infoReset, ...info } = useField('info')
   const history = useHistory()
-  const content = {name:contentField.name, value:contentField.value,onChange:contentField.onChange}
-  const author = {name:authorField.name, value:authorField.value,onChange:authorField.onChange}
-  const info = {name:infoField.name, value:infoField.value,onChange:infoField.onChange}
-  
+
   const handleSubmit = (e) => {
     e.preventDefault()
     addNew({
@@ -89,9 +86,7 @@ const CreateNew = ({ addNew }) => {
 
   const resetFields = (event) => {
     event.preventDefault()
-    contentField.reset()
-    authorField.reset()
-    infoField.reset()
+    contentReset(); authorReset(); infoReset()
   }  
 
   return (
