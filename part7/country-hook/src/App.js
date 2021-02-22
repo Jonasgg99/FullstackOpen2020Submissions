@@ -26,7 +26,6 @@ const useCountry = (name) => {
     axios
       .get(`https://restcountries.eu/rest/v2/name/${name}?fullText=true`)
       .then(response => {
-        console.log('axios')
         response.data[0].found = true
         setCountry(response.data[0])
       })
@@ -41,7 +40,6 @@ const useCountry = (name) => {
 }
 
 const Country = ({ country }) => {
-  console.log(country);
   if (!country || country === null) {
     return null
   }
