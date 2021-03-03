@@ -5,21 +5,22 @@ import loginService from './services/login';
 import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
 
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer';
+import { notificationChange } from './reducers/notificationReducer'
+
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
+  
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  /*const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');*/
-  const [notification, setNotification] = useState(null);
+  //const [notification, setNotification] = useState(null);//
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    );
-  }, []);
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser');
@@ -44,86 +45,25 @@ const App = () => {
       blogService.setToken(user.token);
       setUser(user);
     } catch (exception) {
-      setNotification({ text:'Wrong username or password', error:true });
-      console.log('wrong credentials');
-      setTimeout(() => {
-        setNotification(null);
-      },5000);
+      dispatch(notificationChange('Wrong username or password', 5));
     }
   };
 
-  /*const creationForm = () => (
-    <form onSubmit={addBlog}>
-      <h2>Create new</h2>
-      Title:<input value={title} onChange={({target}) => setTitle(target.value)} />
-      <br/>Author:<input value={author} onChange={({target}) => setAuthor(target.value)} />
-      <br/>Url:<input value={url} onChange={({target}) => setUrl(target.value)} />
-      <button type='submit'>Submit</button>
-    </form>
-  )*/
-
-  const updateBlog = (id, blogValues) => {
-
-    blogService.update(id, blogValues)
-      .then(response => {
-        const updatedBlogs = blogs.map(entry => {
-          return (
-            entry.id === id
-              ? response
-              : entry
-          );
-        });
-        setBlogs(updatedBlogs);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-
-  const removeBlog = (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      blogService.remove(blog).then(() => {
-        setBlogs(blogs.filter(b => b.id !== blog.id));
-      })
-        .catch(error => {
-          console.log(error);
-        });
-    }
-  };
-  const addBlog = (blogObject) => {
-    /*event.preventDefault();
-    console.log('adding blog');
-
-    const newBlog = { title, author, url }
-    console.log(newBlog);*/
-
-    blogService.create(blogObject)
-      .then(response => {
-        setBlogs(blogs.concat(response));
-        setNotification({ text:`a new blog "${response.title}" has been added.`, error:false });
-      })
-      /*.then(setTitle(''), setAuthor(''), setUrl(''))*/
-      .then(setTimeout(() => {
-        setNotification(null);
-      },5000))
-      .catch(error => {
-        console.log(error);
-      });
-  };
-
-  const Notification = ({ message }) => {
+  const Notification = () => {
+    const { message, type } = useSelector(state => state.notification)
+    if (!message) return <br/>
     const notificationStyle = {
-      color: message.error? 'red' : 'green',
+      color: type=='error'? 'red' : 'green',
       fontWeight: 'bold',
       fontSize: 20,
       backgroundColor: 'gainsboro',
-      border: message.error? '3px solid red' : '3px solid green',
+      border: type=='error'? '3px solid red' : '3px solid green',
       borderRadius: '5px',
       padding: '15px'
     };
     return (
       <div className="error" style={notificationStyle}>
-        { message.text }
+        { message }
       </div>
     );
   };
@@ -134,8 +74,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        {notification === null?
-          <br/> : <Notification message = {notification} />}
+          <Notification />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -163,14 +102,12 @@ const App = () => {
         window.localStorage.clear();
       }
       }>log out</button></div>
-      <br/>
-      {notification === null?
-        <br/> : <Notification message = {notification} />}
+      <Notification />
       <Togglable buttonLabel='New blog' >
-        <BlogForm createBlog={addBlog} />
+        <BlogForm />
       </Togglable>
       <div id='bloglist'>{blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} update={updateBlog} removeBlog={removeBlog} />
+        <Blog key={blog.id} blog={blog} />
       )}</div>
     </div>
   );

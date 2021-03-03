@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux'
+import { updateBlog, removeBlog as removeBlogg } from '../reducers/blogReducer'
 
-const Blog = ({ blog, update, removeBlog }) => {
+const Blog = ({ blog, removeBlog }) => {
+  const dispatch = useDispatch()
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -11,13 +15,15 @@ const Blog = ({ blog, update, removeBlog }) => {
 
   const addLike = (event) => {
     event.preventDefault();
-    update(blog.id, { likes: blog.likes+1 });
+    dispatch(updateBlog(blog.id, { likes: blog.likes+1 } ))
+    //update(blog.id, { likes: blog.likes+1 });//
   };
 
   const remove = (event) => {
     event.preventDefault();
     console.log('removing ', blog.title);
-    removeBlog(blog);
+    dispatch(removeBlogg(blog))
+    //removeBlog(blog);//
   };
 
   const [visible, setVisibility] = useState(false);
