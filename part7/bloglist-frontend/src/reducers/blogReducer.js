@@ -1,8 +1,7 @@
 import blogService from '../services/blogs'
 import { notificationChange } from './notificationReducer'
-import { useDispatch as dispatch } from 'react-redux'
 
-export const initializeBlogs = (blogs) => {
+export const initializeBlogs = () => {
   return async dispatch => {
     const blogs = await blogService.getAll()
     dispatch({
