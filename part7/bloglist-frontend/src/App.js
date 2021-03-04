@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
+import Users from './components/Users'
+
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer';
@@ -73,20 +79,29 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <div>{user.username} is logged in<button onClick={() => {
-        dispatch(logout())
-      }
-      }>log out</button></div>
-      <Notification />
-      <Togglable buttonLabel='New blog' >
-        <BlogForm />
-      </Togglable>
-      <div id='bloglist'>{blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}</div>
-    </div>
+    <Router>
+      <div>
+        <h2>blogs</h2>
+        <div>{user.username} is logged in<button onClick={() => {
+          dispatch(logout())
+        }
+        }>log out</button></div>
+        <Notification />
+        <Switch>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/">
+            <Togglable buttonLabel='New blog' >
+              <BlogForm />
+            </Togglable>
+            <div id='bloglist'>{blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} />
+            )}</div>
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 };
 
