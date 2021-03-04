@@ -4,10 +4,19 @@ import { Link } from 'react-router-dom'
 
 const Users = () => {
   const users = useSelector(state => state.blogs.map(n => n.user.username))
-  /*const test = useSelector(state => state.blogs.map(n => n.user))
-  const bla = test.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
+  
+  const test = useSelector(state => state.blogs)
+  console.log(test);
+  const la = {...test} 
+  console.log(la);
+  console.log(test.filter(n=>n.user.username==='floober').length);
+  /*const bla = test.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
   const blad = [...bla.entries()]
   console.log([...bla.keys()]);*/
+
+  const entriesOf = (userid) => {
+    
+  }
 
   const usersMap = users.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map());
   const usersCount = [...usersMap.entries()]
