@@ -3,24 +3,16 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 const Users = () => {
-  const users = useSelector(state => state.blogs.map(n => n.user.username))
-  
-  const test = useSelector(state => state.blogs)
-  console.log(test);
-  const la = {...test} 
-  console.log(la);
-  console.log(test.filter(n=>n.user.username==='floober').length);
-  /*const bla = test.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
-  const blad = [...bla.entries()]
-  console.log([...bla.keys()]);*/
+  const blogs = useSelector(state => state.blogs)
+  const userCount = blogs.map(n => n.user.id).reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map()); 
 
-  const entriesOf = (userid) => {
-    
+  const userOf = (userid) => {
+    const userBlog = blogs.find(n => n.user.id === userid)
+    if (!userBlog) return null
+    return userBlog.user.name
   }
-
-  const usersMap = users.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map());
-  const usersCount = [...usersMap.entries()]
   
+  const userids = [...userCount.keys()]
   return (
     <div>
       <h1>
@@ -29,12 +21,12 @@ const Users = () => {
       <div>
         <h3>Blogs created</h3>
         <table><tbody>
-        {usersCount.map(n => {
+        {userids.map(id => {
           return (
-            <tr key={n[0]}>
+            <tr key={id}>
               <td>
-                <Link to={`/users/${n[0]}`}>{n[0]}</Link></td>
-              <td>{n[1]}</td>
+                <Link to={`/users/${id}`}>{userOf(id)}</Link></td>
+              <td>{userCount.get(id)}</td>
             </tr> 
           )
         })}

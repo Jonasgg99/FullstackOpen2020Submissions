@@ -3,7 +3,7 @@ import Blog from './components/Blog';
 import BlogForm from './components/BlogForm';
 import Togglable from './components/Togglable';
 import Users from './components/Users'
-
+import User from './components/User'
 import {
   BrowserRouter as Router,
   Switch, Route, Link
@@ -88,6 +88,9 @@ const App = () => {
         }>log out</button></div>
         <Notification />
         <Switch>
+          <Route path="/users/:id">
+            <User />
+          </Route>
           <Route path="/users">
             <Users />
           </Route>
