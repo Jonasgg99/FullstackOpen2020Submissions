@@ -2,21 +2,29 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/client';
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
+import Select from 'react-select'
 
-const ChangeBirthYear = () => {
-  const [authorName, setAuthorName] = useState('')
+const ChangeBirthYear = ({ authors }) => {
+  const [selectedAuthor, setSelectedAuthor] = useState(null)
   const [birthYear, setBirthYear] = useState('')
+
+  const authorList = authors.data.allAuthors
 
   const [ editAuthor ] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [ { query: ALL_AUTHORS } ]
   })
 
+  let options = []
+  authorList.forEach(author => {
+    options = [...options, {value:author.name, label:author.name}]
+  })
+
   const submit = (event) => {
     event.preventDefault()
 
-    editAuthor( {variables: { name: authorName, year: parseInt(birthYear) } })
+    editAuthor( {variables: { name: selectedAuthor.value, year: parseInt(birthYear) } })
 
-    setAuthorName('')
+    setSelectedAuthor(null)
     setBirthYear('')
   }
 
@@ -24,13 +32,10 @@ const ChangeBirthYear = () => {
     <div>
   <h2>Set birthyear</h2>
       <form onSubmit= { submit }>
-            <div>
-              name
-              <input
-                value={authorName}
-                onChange={({target}) => setAuthorName(target.value)}>
-              </input>
-            </div>
+        <Select 
+          defaultValue={selectedAuthor} 
+          onChange={setSelectedAuthor} 
+          options={options}/>
             <div>
               born
               <input
@@ -81,7 +86,7 @@ const Authors = (props) => {
         </tbody>
       </table>
 
-      <ChangeBirthYear />
+      <ChangeBirthYear authors={props.authors} />
     </div>
   )
 }
