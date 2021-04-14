@@ -24,7 +24,6 @@ const ChangeBirthYear = ({ authors }) => {
 
     editAuthor( {variables: { name: selectedAuthor.value, year: parseInt(birthYear) } })
 
-    setSelectedAuthor(null)
     setBirthYear('')
   }
 
