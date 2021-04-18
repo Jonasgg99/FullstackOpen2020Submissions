@@ -161,6 +161,9 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
+      if (args.title.length < 2) throw new UserInputError('Title too short')
+      if (args.author.length < 4) throw new UserInputError('Author name too short')
+
       const book = await Book.findOne({title:args.title})
       if (book) {
         throw new UserInputError('Book already exists', {
@@ -169,7 +172,6 @@ const resolvers = {
       }
       let author = await Author.findOne({name:args.author})
       if (!author) {
-        console.log('author not found');
         author = new Author({ name: args.author })
         author.save()
       }
