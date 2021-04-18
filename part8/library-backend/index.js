@@ -1,15 +1,15 @@
 const { ApolloServer, UserInputError, gql } = require('apollo-server')
 const { v1: uuid } = require('uuid')
 const mongoose = require('mongoose')
+require('dotenv').config()
 
 const Author = require('./models/author')
 const Book = require('./models/book')
+/*const config = require("./config");
 
-const MONGODB_URI = 'mongodb+srv://fullstack:fullstack2020@cluster0.thypf.mongodb.net/part8database?retryWrites=true&w=majority'
+const MONGODB_URI = config.MONGODB_URI*/
 
-console.log('connecting to', MONGODB_URI);
-
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
   .then(() => {
     console.log('connected to MongoDB')
   })
