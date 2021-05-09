@@ -8,6 +8,9 @@ const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
 
+const { PubSub } = require('apollo-server')
+const pubsub = new PubSub()
+
 const JWT_SECRET = 'onefelloverthemoon876329'
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
@@ -18,6 +21,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     console.log('error connection to MongoDB:', error.message)
   })
 
+mongoose.set('debug', true)
 
 let books = [
   {
@@ -72,6 +76,10 @@ let books = [
 ]
 
 const typeDefs = gql`
+  type Subscription {
+    bookAdded: Book!
+  }
+
   type User {
     username: String!
     favoriteGenre: String!
@@ -115,6 +123,7 @@ const typeDefs = gql`
     name: String
     born: Int
     bookCount: Int!
+    id: ID!
   }
 
   type Query {
@@ -131,13 +140,17 @@ const resolvers = {
     me: (root,args,context) => {
       return context.currentUser
     },
-    bookCount: () => Book.countDocuments(),
+    bookCount: () => {
+      console.log('counting...');
+      Book.countDocuments()
+    },
     authorCount: () => Author.countDocuments(),
     allBooks: (root, args) => {
       if (args.author && args.genre) {
         return books.filter(b => b.author === args.author)
                     .filter(b => b.genres.includes(args.genre))
       } else if (args.author) {
+        //return Book.find( {author: { name: args.author } })
         return books.filter(b => b.author === args.author)
       } else if (args.genre) {
         const bookList = Book.find( {genres: { $in: args.genre }})
@@ -145,12 +158,10 @@ const resolvers = {
       }
       return Book.find({}).populate('author')
     },
-    allAuthors: () => Author.find()
+    allAuthors: () => Author.find({}).populate('books')
   },
   Author: {
-    bookCount: (root) => {
-      return Book.countDocuments({author:root})
-    }
+    bookCount: (root) => root.books.length
   },
   Mutation: {
     createUser: (root, args) => {
@@ -193,11 +204,16 @@ const resolvers = {
       let author = await Author.findOne({name:args.author})
       if (!author) {
         author = new Author({ name: args.author })
-        author.save()
       }
       const newBook = new Book({...args, author:author})
+      const savedBook = await newBook.save()
 
-      return newBook.save()
+      author.books = author.books.concat(savedBook._id)
+      author.save()
+
+      pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+
+      return savedBook
     },
     editAuthor: (root, args, context) => {
       if (!context.currentUser) {
@@ -205,7 +221,12 @@ const resolvers = {
       }
       return Author.findOneAndUpdate({name:args.name}, {born:args.setBornTo}, {new:true})
     }
-  }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    },
+  },
 }
 
 const server = new ApolloServer({
@@ -223,6 +244,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
