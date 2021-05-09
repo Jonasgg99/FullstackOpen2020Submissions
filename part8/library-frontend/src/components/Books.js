@@ -7,13 +7,15 @@ const Books = (props) => {
   const [getBooksByGenre, result] = useLazyQuery(ALL_BOOKS)
   const [booksToShow, setBooksToShow] = useState([])
 
+  if (result.data) result.refetch()
+
   useEffect(() => {
     if ( result.data ) {
       setBooksToShow(result.data.allBooks)
     } else if (result.loading) {
       return
     } else {
-      setBooksToShow(props.books.data.allBooks)
+      getBooksByGenre()
     }
   }, [result.data]) // eslint-disable-line
   
