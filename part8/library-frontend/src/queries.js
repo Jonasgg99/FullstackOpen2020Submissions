@@ -16,6 +16,7 @@ query {
     title
     author {name}
     published
+    genres
   }
 }
 `
@@ -53,5 +54,14 @@ mutation login($username:String!, $password:String!) {
     username: $username,
     password: $password
   ) { value }
+}
+`
+
+export const CURRENT_USER = gql`
+query {
+  me {
+    username
+    favoriteGenre
+  }
 }
 `
