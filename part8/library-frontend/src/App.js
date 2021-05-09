@@ -18,8 +18,6 @@ const App = () => {
   const user = useQuery(CURRENT_USER)
   const client = useApolloClient()
 
-  console.log(user);
-
   const logout = () => {
     setToken(null)
     localStorage.clear()

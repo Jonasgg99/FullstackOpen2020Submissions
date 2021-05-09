@@ -1,7 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { ALL_BOOKS } from '../queries'
+import { useLazyQuery } from '@apollo/client';
 
 const Books = (props) => {
   const [selectedGenre, setGenre] = useState(null)
+  const [getBooksByGenre, result] = useLazyQuery(ALL_BOOKS)
+
+  let booksToShow = []
+  useEffect(() => {
+    if ( result.data ) {
+      console.log(result.data);
+      booksToShow = result.data
+    } 
+  }, [result.data]) // eslint-disable-line
   
   if (!props.show) {
     return null
@@ -23,7 +34,9 @@ const Books = (props) => {
   })
   console.log('genres');
 
-  const booksToShow = selectedGenre? books.filter(book => book.genres.includes(selectedGenre)) : books
+  if (!selectedGenre) booksToShow = books
+
+  //const booksToShow = selectedGenre? books.filter(book => book.genres.includes(selectedGenre)) : books
 
   return (
     <div>
@@ -52,7 +65,7 @@ const Books = (props) => {
         </tbody>
       </table>
       {genres.map(genre => 
-        <button key={genre} onClick={({}) => setGenre(genre)}>{genre}</button>)}
+        <button key={genre} onClick={({}) => getBooksByGenre({ variables: {genre}})}>{genre}</button>)}
     </div>
   )
 }
