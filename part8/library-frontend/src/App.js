@@ -51,12 +51,12 @@ const App = () => {
         authors = {authors}
         show={page === 'authors'}
       />
-
+      {books.loading? null :
       <Books
         books = {books}
         show={page === 'books'}
       />
-
+      }
       <NewBook
         show={page === 'add'}
       />

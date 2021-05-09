@@ -5,23 +5,22 @@ import { useLazyQuery } from '@apollo/client';
 const Books = (props) => {
   const [selectedGenre, setGenre] = useState(null)
   const [getBooksByGenre, result] = useLazyQuery(ALL_BOOKS)
+  const [booksToShow, setBooksToShow] = useState([])
 
-  let booksToShow = []
   useEffect(() => {
     if ( result.data ) {
-      console.log(result.data);
-      booksToShow = result.data
-    } 
+      setBooksToShow(result.data.allBooks)
+    } else if (result.loading) {
+      return
+    } else {
+      setBooksToShow(props.books.data.allBooks)
+    }
   }, [result.data]) // eslint-disable-line
   
   if (!props.show) {
     return null
   }
   
-  if (props.books.loading) {
-    return <div>loading...</div>
-  }
-
   const books = props.books.data.allBooks
 
   let genres = []
@@ -32,12 +31,9 @@ const Books = (props) => {
       }
     })
   })
-  console.log('genres');
 
-  if (!selectedGenre) booksToShow = books
 
   //const booksToShow = selectedGenre? books.filter(book => book.genres.includes(selectedGenre)) : books
-
   return (
     <div>
       <h2>books</h2>
@@ -65,7 +61,12 @@ const Books = (props) => {
         </tbody>
       </table>
       {genres.map(genre => 
-        <button key={genre} onClick={({}) => getBooksByGenre({ variables: {genre}})}>{genre}</button>)}
+        <button key={genre} onClick={() => {
+          setGenre(genre)
+          getBooksByGenre({ variables: {genre} } )
+          }}>
+            {genre}
+        </button>)}
     </div>
   )
 }
