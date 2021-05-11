@@ -9,7 +9,6 @@ interface Summary {
 }
 
 const calculateExercises = ( log: Array<number>, tar: number ) : Summary => {
-
   const periodLength = log.length;
   const trainingDays = log.filter(hours => hours > 0).length;
   const average = log.reduce((a, b) => a + b, 0) / log.length;

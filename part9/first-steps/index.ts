@@ -10,12 +10,23 @@ app.get('/hello', (_req, res) => {
 });
 
 app.post('/exercises', (req, res) => {
-  console.log(req.body);
-  
   const log = req.body.log
   const tar = req.body.tar
+
+  if (!log || !tar)  {
+    res.status(400).json({
+      error: "missing parameters"
+    })
+  }
+ 
+  if (isNaN(tar) || !log.every((element: any) => typeof element === 'number')) { 
+    res.status(400).json({
+      error: "malformatted parameters"
+    })
+  }
   
   const result = calculateExercises(log, tar)
+
   res.send(JSON.stringify(result))
 })
 
