@@ -29,10 +29,14 @@ const calculateExercises = ( log: Array<number>, tar: number ) : Summary => {
   };
 };
 
-const target  =
-  Number(process.argv[2]);
+if (process.argv[2]) {
+  const target  =
+    Number(process.argv[2]);
 
-const trainingLog : Array<number> = 
-  process.argv.slice(3).map(str => Number(str));
+  const trainingLog : Array<number> = 
+    process.argv.slice(3).map(str => Number(str));
 
-console.log(calculateExercises(trainingLog, target));
+  console.log(calculateExercises(trainingLog, target));
+}
+
+export default calculateExercises;
