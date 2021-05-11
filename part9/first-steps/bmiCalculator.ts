@@ -11,12 +11,15 @@ const calculateBmi = (cm : number, kg: number) : string => {
   
 }
 
-const cm: number = Number(process.argv[2]);
-const kg: number = Number(process.argv[3]);
-try {
-  console.log(calculateBmi(cm, kg));
-} catch (e) {
-  console.log('Error: ', e.message);  
-};
+//Command line
+if (process.argv[2] && process.argv[3]) {
+  const cm: number = Number(process.argv[2]);
+  const kg: number = Number(process.argv[3]);
+  try {
+    console.log(calculateBmi(cm, kg));
+  } catch (e) {
+    console.log('Error: ', e.message);  
+  };
+}
 
 export default calculateBmi;

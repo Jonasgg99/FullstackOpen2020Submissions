@@ -9,7 +9,14 @@ app.get('/hello', (_req, res) => {
 
 app.get('/bmi', (req, res) => {
   const height = Number(req.query.height);
-  const weight = Number(req.query.weight);
+  const weight = Number(req.query.weight);  
+  
+  if (!height || !weight || isNaN(height) || isNaN(weight)) {
+    res.status(400).json({
+      error: 'missing or invalid query'
+    })
+  }
+
   const bmi = calculateBmi(height, weight);
 
   const toReturn = {
