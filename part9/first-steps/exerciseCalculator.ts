@@ -6,7 +6,7 @@ interface Summary {
   ratingDescription: string;
   target: number;
   average: number;
-};
+}
 
 const calculateExercises = ( log: Array<number>, tar: number ) : Summary => {
 
@@ -29,7 +29,7 @@ const calculateExercises = ( log: Array<number>, tar: number ) : Summary => {
   };
 };
 
-const target : number =
+const target  =
   Number(process.argv[2]);
 
 const trainingLog : Array<number> = 

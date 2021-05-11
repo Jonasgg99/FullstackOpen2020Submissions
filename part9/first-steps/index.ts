@@ -4,7 +4,7 @@ import calculateBmi from './bmiCalculator';
 const app = express();
 
 app.get('/hello', (_req, res) => {
-  res.send('Hello Full Stack!')
+  res.send('Hello Full Stack!');
 });
 
 app.get('/bmi', (req, res) => {
@@ -14,7 +14,7 @@ app.get('/bmi', (req, res) => {
   if (!height || !weight || isNaN(height) || isNaN(weight)) {
     res.status(400).json({
       error: 'missing or invalid query'
-    })
+    });
   }
 
   const bmi = calculateBmi(height, weight);
@@ -26,7 +26,7 @@ app.get('/bmi', (req, res) => {
   };
   
   res.send(JSON.stringify(toReturn));
-})
+});
 
 const PORT = 3002;
 
